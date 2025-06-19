@@ -1,21 +1,11 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.qrverifier.app',
-  appName: 'QR Verifier App',
+  appId: 'com.tuempresa.qrverifier',
+  appName: 'QR Verifier',
   webDir: 'dist',
   server: {
-    androidScheme: 'https',
-    allowNavigation: [
-      'hayplaza.com',
-      'https://hayplaza.com',
-      'https://hayplaza.com/*'
-    ]
-  },
-  android: {
-    allowMixedContent: true,
-    captureInput: true,
-    webContentsDebuggingEnabled: true
+    androidScheme: 'https'
   }
 };
 
