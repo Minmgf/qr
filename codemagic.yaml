@@ -1,32 +1,43 @@
 workflows:
-  ionic-ios-workflow:
-    name: Ionic iOS Workflow
+  ionic-react-ios-workflow:
+    name: Ionic React iOS Workflow
     instance_type: mac_mini_m1
     max_build_duration: 120
     environment:
       node: 18
-      npm: latest
+      npm: 9
       cocoapods: default
       xcode: latest
       vars:
-        IONIC_CLI_VERSION: "7.1.1"
+        CAPACITOR_CLI_VERSION: "7.3.0"
     scripts:
       - name: Install dependencies
         script: |
-          npm install -g @ionic/cli@$IONIC_CLI_VERSION
           npm ci
-      - name: Cocoapods installation
+      - name: Install Capacitor CLI globally
+        script: |
+          npm install -g @capacitor/cli@$CAPACITOR_CLI_VERSION
+      - name: Build React app
+        script: |
+          npm run build
+      - name: Add iOS platform if needed
+        script: |
+          npx cap add ios || echo "iOS platform already exists"
+      - name: Sync Capacitor
+        script: |
+          npx cap sync ios
+      - name: Install CocoaPods dependencies
         script: |
           cd ios/App && pod install
       - name: Set up code signing settings on Xcode project
         script: |
           xcode-project use-profiles
-      - name: Build iOS
+      - name: Build iOS app
         script: |
-          ionic build
-          ionic cap copy ios
-          ionic cap build ios --prod
+          xcode-project build-ipa \
+            --workspace ios/App/App.xcworkspace \
+            --scheme App
     artifacts:
+      - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
-      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.ipa
-      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+      - ios/App/build/Build/Products/**/*.ipa
