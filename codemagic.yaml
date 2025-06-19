@@ -20,15 +20,24 @@ workflows:
       - name: Build React app
         script: |
           npm run build
-      - name: Initialize Capacitor if needed
+      - name: Check Capacitor configuration
         script: |
           if [ ! -f capacitor.config.ts ] && [ ! -f capacitor.config.js ]; then
-            npx cap init "QR Verifier" "com.example.qrverifier"
+            echo "Creating Capacitor configuration..."
+            npx cap init "QR Verifier" "com.example.qrverifier" --web-dir=dist
+          else
+            echo "Capacitor config found"
+            cat capacitor.config.* || true
           fi
-      - name: Add iOS platform
+      - name: Add iOS platform safely
         script: |
-          npx cap add ios --confirm
-      - name: Sync Capacitor with verbose output
+          if [ ! -d "ios" ]; then
+            echo "Adding iOS platform..."
+            npx cap add ios
+          else
+            echo "iOS platform already exists"
+          fi
+      - name: Sync Capacitor
         script: |
           npx cap sync ios --verbose
       - name: Install CocoaPods dependencies

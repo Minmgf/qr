@@ -1,7 +1,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.tuempresa.qrverifier',
+  appId: 'com.example.qrverifier',
   appName: 'QR Verifier',
   webDir: 'dist',
   server: {
